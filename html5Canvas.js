@@ -1,7 +1,7 @@
 /**
  * @author liming
  * html5 canvas
- * 
+ *
  */
 
 (function(context) {
@@ -40,7 +40,9 @@
   function Drawer(canvasId,options) {
     this.isDrawing = false;
     this.hasDrawing = false;
-    this.init(canvasId,options);
+    options = options || [];
+    this.options = options;
+    this.init(canvasId);
     this.bindEvents();
   }
 
@@ -56,7 +58,7 @@
   };
 
 
-  Drawer.prototype.init = function(canvasId,options) {
+  Drawer.prototype.init = function(canvasId) {
     var canvas;
     canvas = document.getElementById(canvasId);
     this.canvas = canvas;
@@ -68,7 +70,7 @@
     this.nextDrawArr = [];
     this.middleDrawArr = [];
 
-    this.fillStyle = options.fillStyle || 'rgb(255,255,255)';
+    this.fillStyle = this.options.fillStyle || 'rgba(0, 0, 0, 0.26)';
 
     var auto = true,
         devicePixelRatio = window.devicePixelRatio || 1,
@@ -96,6 +98,7 @@
     // image.onload = function () {
     //    _drawContext.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
     // };
+    console.log(this.fillStyle);
     this.context.fillStyle = this.fillStyle;
     this.context.fillRect (0, 0, canvas.width, canvas.height);
     var preData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -105,13 +108,18 @@
 
 
   Drawer.prototype.getCoors = function(event) {
-      event.preventDefault();
-      var offset = _getAbsolutePosition(this.canvas);
-      var coors = {
+    event.preventDefault();
+    var coors,offset;
+    try{
+      offset = _getAbsolutePosition(this.canvas);
+      coors = {
         x: event.touches ? (event.touches[0].pageX - offset.x) : ( event.pageX - offset.x ),
         y: event.touches ? (event.touches[0].pageY - offset.y) : ( event.pageY - offset.y )
       };
-      return coors;
+    } catch(e) {
+      console.log(e);
+    }
+    return coors;
   };
 
   Drawer.prototype.drawstart = function(event) {
@@ -154,10 +162,10 @@
     }
   };
 
-	/**
-     * reset prev precess
-     */
-    Drawer.prototype.cleanLastStep = function() {
+  /**
+   * reset prev precess
+   */
+  Drawer.prototype.cleanLastStep = function() {
     var popData, midData;
     var _self = this;
     if (_self.preDrawArr.length > 0) {
@@ -168,12 +176,11 @@
     }
   };
 
-	/**
-     * reset next precess
-     * @returns {boolean}
-     */
+  /**
+   * reset next precess
+   * @returns {boolean}
+   */
   Drawer.prototype.resetNextStep = function() {
-    console.log('reset');
     var popData, midData;
     var _self = this;
     if (_self.nextDrawArr.length) {
@@ -185,10 +192,10 @@
     }
   };
 
-	/**
-     * clean all map
-     */
-    Drawer.prototype.cleanAll = function() {
+  /**
+   * clean all map
+   */
+  Drawer.prototype.cleanAll = function() {
     var _self = this;
     _self.context.fillStyle = _self.fillStyle;
     _self.context.fillRect (0, 0, _self.canvas.width, _self.canvas.height);
