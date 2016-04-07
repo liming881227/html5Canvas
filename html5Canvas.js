@@ -40,7 +40,7 @@
   function Drawer(canvasId,options) {
     this.isDrawing = false;
     this.hasDrawing = false;
-    options = options || [];
+    options = options || {};
     this.options = options;
     this.init(canvasId);
     this.bindEvents();
@@ -71,6 +71,7 @@
     this.middleDrawArr = [];
 
     this.fillStyle = this.options.fillStyle || 'rgba(0, 0, 0, 0.26)';
+    this.context.lineWidth = 100;
 
     var auto = true,
         devicePixelRatio = window.devicePixelRatio || 1,
@@ -98,7 +99,6 @@
     // image.onload = function () {
     //    _drawContext.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
     // };
-    console.log(this.fillStyle);
     this.context.fillStyle = this.fillStyle;
     this.context.fillRect (0, 0, canvas.width, canvas.height);
     var preData = this.context.getImageData(0, 0, this.canvas.width, this.canvas.height);
@@ -110,6 +110,7 @@
   Drawer.prototype.getCoors = function(event) {
     event.preventDefault();
     var coors,offset;
+    //TODO bug event.touches
     try{
       offset = _getAbsolutePosition(this.canvas);
       coors = {
